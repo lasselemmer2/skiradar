@@ -39,3 +39,15 @@ jobs:
               --notes "Wettervorhersage für SkiRadar, zweimal täglich neu. Quelle: Open-Meteo.com, Lizenz CC BY 4.0 – https://open-meteo.com/ (Modelle von DWD, ECMWF, NOAA, Météo-France)."
           fi
           gh release upload wetter paket/wetter-berg.json.gz paket/wetter-tal.json.gz --clobber
+      - name: Lebenszeichen (GitHub schaltet Zeitpläne sonst nach 60 Tagen ohne Commit ab)
+        if: github.event_name == 'schedule'
+        run: |
+          # einmal pro Woche (montags) eine Zeile mit dem Datum des letzten Laufs committen
+          if [ "$(date -u +%u)" = "1" ] && [ "$(date -u +%H)" -lt 12 ]; then
+            date -u +"Letzter Wetterlauf: %Y-%m-%d %H:%M UTC" > daten/letzter-lauf.txt
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add daten/letzter-lauf.txt
+            git commit -m "Wetterdaten: Lebenszeichen" || true
+            git push || true
+          fi
