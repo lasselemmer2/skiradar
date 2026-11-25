@@ -22,7 +22,7 @@ li{margin:4px 0}
 <h2>4. Abruf von Daten bei Drittanbietern</h2>
 <p>Für Karte, Wetter, Suche und Routen ruft die App Inhalte direkt bei folgenden Diensten ab. Technisch bedingt erhalten diese dabei deine <b>IP-Adresse</b>, Geräte-/Browserinformationen (User-Agent) und den Inhalt der Anfrage, also <b>Koordinaten bzw. Kartenausschnitte</b> (z. B. für das Wetter an deinem Standort) oder deinen <b>Suchbegriff</b>. Die App sendet keine Namen, Konten oder Gerätekennungen mit. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung der von dir genutzten Funktion) bzw. Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer funktionierenden Karte).</p>
 <table><tr><th>Dienst</th><th>Zweck</th><th>Gesendet</th></tr>
-<tr><td><a href="https://open-meteo.com/en/terms">Open-Meteo</a></td><td>Wetterprognosen</td><td>Koordinaten (Gitter über die Alpen, Skigebiete oder gewählter Punkt)</td></tr>
+<tr><td><a href="https://open-meteo.com/en/terms">Open-Meteo</a></td><td>Wetterprognosen</td><td>In der App nur noch der Punkt, den du für „Wetter genau hier“ wählst (Koordinaten). Die Vorhersage für Skigebiete und das Alpen-Raster ruft ein zentraler Dienst ab, nicht dein Gerät.</td></tr>
 <tr><td><a href="https://eox.at">EOX IT Services GmbH</a> (Österreich)</td><td>Satellitenbild</td><td>Kartenausschnitt</td></tr>
 <tr><td>NASA GIBS (USA)</td><td>Winter-Satellitenbilder</td><td>Kartenausschnitt</td></tr>
 <tr><td>Amazon Web Services – Open Data (Mapzen Terrain)</td><td>Geländehöhen</td><td>Kartenausschnitt</td></tr>
@@ -31,7 +31,7 @@ li{margin:4px 0}
 <tr><td><a href="https://project-osrm.org">OSRM</a></td><td>Fahrzeiten zu Skigebieten</td><td>Heimatort und Ziel-Koordinaten</td></tr>
 <tr><td>Overpass-API-Server (FOSSGIS e.V. u. a.)</td><td>Pisten/Skigebiete außerhalb der eingebauten Daten, Skigebiet beim Tracker</td><td>Kartenausschnitt</td></tr>
 <tr><td><a href="https://avalanche.report">avalanche.report</a> (Euregio)</td><td>Lawinenregionen und EAWS-Stufen</td><td>Datum, Kartenausschnitt</td></tr>
-<tr><td>GitHub (USA)</td><td>wöchentlich aktualisierte Pistendaten</td><td>Abruf der Datei</td></tr></table>
+<tr><td>GitHub (USA)</td><td>wöchentlich aktualisierte Pistendaten und zweimal täglich aktualisierte Wettervorhersage (von Open-Meteo)</td><td>Abruf der Dateien</td></tr></table>
 <p>Soweit ein Dienst seinen Sitz außerhalb der EU/des EWR hat (z. B. USA), kann dabei deine IP-Adresse in dieses Land übertragen werden. Es gelten die Datenschutzbestimmungen der jeweiligen Anbieter. Ich selbst betreibe keinen Server, der deine Daten empfängt oder speichert.</p>
 <h2>5. App Store und Apple</h2>
 <p>Beim Herunterladen und bei Updates verarbeitet Apple Daten nach der <a href="https://www.apple.com/de/legal/privacy/">Datenschutzrichtlinie von Apple</a>. Wenn du in iOS „Mit App-Entwicklern teilen“ aktiviert hast, erhalte ich von Apple anonymisierte Absturzberichte und Nutzungsstatistiken.</p>
