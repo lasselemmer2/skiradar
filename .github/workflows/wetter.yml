@@ -1,0 +1,41 @@
+# Holt zweimal täglich die Wettervorhersage für alle Skiorte der App bei Open-Meteo und legt sie als Paket ab.
+# Die App lädt: https://github.com/<benutzer>/skiradar/releases/download/wetter/wetter-berg.json.gz (und wetter-tal.json.gz)
+# Dadurch fragt nicht jedes Gerät einzeln den Wetterdienst ab (dessen Gratis-Limit sonst schnell erreicht ist).
+# Ein Lauf kostet ca. 4000 gewichtete Open-Meteo-Abrufe – 2 Läufe pro Tag bleiben unter dem Tageslimit von 10 000.
+name: Wetterdaten aktualisieren
+on:
+  schedule:
+    - cron: '23 4 * * *'     # 04:23 UTC (nach den Nachtläufen von ICON/ECMWF/GFS)
+    - cron: '23 15 * * *'    # 15:23 UTC (nach den Mittagsläufen)
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: wetter
+  cancel-in-progress: false
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wetter abrufen
+        run: |
+          python3 tools/wetter_bauen.py paket
+          ls -la paket
+          python3 -c "
+          import gzip,json
+          for n,k in (('berg',18),('tal',10)):
+              d=json.load(gzip.open('paket/wetter-%s.json.gz'%n))
+              assert len(d['r'])>=k, (n,len(d['r']))
+              print(n,len(d['r']),'Antworten, Stand',d['ts'])
+          "
+      - name: Paket veröffentlichen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view wetter >/dev/null 2>&1; then
+            gh release create wetter --prerelease --latest=false --title "Wetterdaten (laufend aktualisiert)" \
+              --notes "Wettervorhersage für SkiRadar, zweimal täglich neu. Quelle: Open-Meteo.com, Lizenz CC BY 4.0 – https://open-meteo.com/ (Modelle von DWD, ECMWF, NOAA, Météo-France)."
+          fi
+          gh release upload wetter paket/wetter-berg.json.gz paket/wetter-tal.json.gz --clobber
