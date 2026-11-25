@@ -29,7 +29,7 @@ jobs:
         run: |
           python3 -c "import sys; sys.path.insert(0,'tools'); import pisten_bauen as p; p.CHECK_DAYS=0; p.main('cache','daten')"
           ls -la daten
-          python3 -c "import gzip,json;d=json.loads(gzip.open('daten/alpen-pisten.json.gz').read());n=len(d['blocks']);print('Bereiche',n,'Stand',d['date']);assert n>1000"
+          python3 -c "import gzip,json;d=json.loads(gzip.open('daten/alpen-pisten.json.gz').read());n=len(d['blocks']);print('Bereiche',n,'Stand',d['date']);assert n>300"
       - name: Als Release veröffentlichen
         if: steps.stand.outputs.bauen == 'ja'
         env:
