@@ -127,16 +127,23 @@ def _center(g):
 def build_areas():
     """Namen und Mittelpunkte aller Skigebiete (Alpinski und Langlauf) – für die Namensschilder auf der Karte."""
     out = []
-    for ln in lines(f'{BASE}/geojson/ski_areas.geojson'):
-        ln = ln.strip()
-        if ln.endswith(b','):
-            ln = ln[:-1]
-        if not ln.startswith(b'{"type":"Feature"'):
-            continue
-        try:
-            f = json.loads(ln)
-        except Exception:
-            continue
+    raw = b''.join(lines(f'{BASE}/geojson/ski_areas.geojson'))
+    feats = []
+    try:                                   # ganze Datei als eine FeatureCollection (so liefert OpenSkiData die Skigebiete)
+        d = json.loads(raw)
+        feats = d.get('features') or [] if isinstance(d, dict) else []
+    except Exception:
+        pass
+    if not feats:                          # sonst: ein Feature pro Zeile (wie bei Pisten und Liften)
+        for ln in raw.splitlines():
+            ln = ln.strip().rstrip(b',')
+            if b'"Feature"' in ln[:40]:
+                try:
+                    feats.append(json.loads(ln))
+                except Exception:
+                    pass
+    log('Skigebiete in der Datei:', len(feats), '' if feats else '– Anfang: ' + raw[:200].decode('utf-8', 'replace'))
+    for f in feats:
         p = f.get('properties') or {}
         name = (p.get('name') or '').strip()
         if not name or p.get('status') in ('abandoned', 'disused'):
@@ -151,6 +158,8 @@ def build_areas():
         st = ((p.get('statistics') or {}).get('runs') or {}).get('byActivity') or {}
         km = round(_km(st.get('downhill') if kind == 'a' else st.get('nordic')), 1)
         out.append([name, round(c[0], 5), round(c[1], 5), km, kind])
+    if not out and feats:
+        log('Beispiel-Eigenschaften:', json.dumps(feats[0].get('properties'), ensure_ascii=False)[:600])
     out.sort(key=lambda a: -a[3])
     log(len(out), 'Skigebiete mit Namen')
     return out
