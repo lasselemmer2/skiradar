@@ -1,0 +1,22 @@
+# Ergänzt die neueste Pistendatei um die Höhenlage je Skiort (tiefster Liftstart, höchstes Liftende).
+# Lädt dafür nur die eigene Release-Datei und Geländekacheln (AWS Open Data) – nichts von OpenSkiData.
+name: Höhen je Skiort nachtragen
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  hoehen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Neueste Pistendatei holen, Höhen eintragen, wieder hochladen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(gh release list --limit 20 --json tagName,isLatest -q '.[] | select(.isLatest) | .tagName')
+          echo "Release: $tag"
+          mkdir -p daten && gh release download "$tag" -p alpen-pisten.json.gz -D daten --clobber
+          python3 tools/hoehen_bauen.py daten/alpen-pisten.json.gz
+          gh release upload "$tag" daten/alpen-pisten.json.gz --clobber

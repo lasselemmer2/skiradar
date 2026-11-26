@@ -35,6 +35,7 @@ jobs:
           python3 -c "import sys; sys.path.insert(0,'tools'); import pisten_bauen as p; p.CHECK_DAYS=0; p.main('cache','daten')"
           ls -la daten
           python3 -c "import gzip,json;d=json.loads(gzip.open('daten/alpen-pisten.json.gz').read());n=len(d['blocks']);print('Bereiche',n,'Stand',d['date']);assert n>300;print('Skigebiete',len(d.get('areas',[])))"
+          python3 tools/hoehen_bauen.py daten/alpen-pisten.json.gz || echo 'Höhen konnten nicht berechnet werden – Pistendatei bleibt ohne'
       - name: Als Release veröffentlichen
         if: steps.stand.outputs.bauen == 'ja'
         env:
