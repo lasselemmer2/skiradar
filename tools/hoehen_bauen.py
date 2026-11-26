@@ -2,7 +2,7 @@
    Für jeden Ort (tools/skiorte.json: Name, Breite, Länge) werden alle Lifte genommen, deren Tal- oder Bergstation
    höchstens RADIUS_KM vom Ort entfernt liegt. Die Höhen der beiden Liftenden kommen aus dem Geländemodell
    (Mapzen Terrain Tiles auf AWS Open Data, Terrarium-Kacheln, Zoom 13 ≈ 15 m je Pixel).
-   Ergebnis wird als "elev": {Name: [tiefster Liftstart, höchstes Liftende, Anzahl Lifte]} in die Pistendatei geschrieben.
+   Ergebnis wird als "elev": {Name: [tiefster Liftstart, höchstes Liftende, Anzahl Lifte, Länge/Breite tief, Länge/Breite hoch]} in die Pistendatei geschrieben.
    Aufruf: python3 tools/hoehen_bauen.py daten/alpen-pisten.json.gz"""
 import gzip, json, math, os, struct, sys, time, urllib.request, zlib
 
@@ -69,11 +69,13 @@ def main(path):
     for name, lat, lon in orte:
         mine = [l for l in lifts if km(l[0], l[1], lon, lat) < RADIUS_KM or km(l[2], l[3], lon, lat) < RADIUS_KM]
         if not mine: continue
-        lo, hi = 1e9, -1e9
+        lo, hi, plo, phi = 1e9, -1e9, None, None
         for l in mine:
-            a, b = ele(l[0], l[1]), ele(l[2], l[3])
-            lo = min(lo, a, b); hi = max(hi, a, b)
-        out[name] = [round(lo), round(hi), len(mine)]
+            for (x, y) in ((l[0], l[1]), (l[2], l[3])):
+                e = ele(x, y)
+                if e < lo: lo, plo = e, (x, y)
+                if e > hi: hi, phi = e, (x, y)
+        out[name] = [round(lo), round(hi), len(mine), round(plo[0], 5), round(plo[1], 5), round(phi[0], 5), round(phi[1], 5)]
         print(f'{name}: {round(lo)}–{round(hi)} m ({len(mine)} Lifte)', flush=True)
     d['elev'] = out
     with gzip.open(path, 'wt', encoding='utf-8') as g:
