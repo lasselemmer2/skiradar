@@ -34,7 +34,7 @@ def png_rgb(b):
     return w, bpp, bytes(out)
 
 _tiles = {}
-def ele(lon, lat):
+def ele(lon, lat, rad=0):
     n = 2 ** Z; fx = (lon + 180) / 360 * n; la = math.radians(lat)
     fy = (1 - math.log(math.tan(la) + 1 / math.cos(la)) / math.pi) / 2 * n
     x, y = int(fx), int(fy)
@@ -46,8 +46,13 @@ def ele(lon, lat):
                 if k == 3: raise
                 time.sleep(2 * (k + 1))
     w, bpp, d = _tiles[(x, y)]
-    px = min(w - 1, int((fx - x) * w)); py = min(w - 1, int((fy - y) * w)); i = (py * w + px) * bpp
-    return d[i] * 256 + d[i + 1] + d[i + 2] / 256 - 32768
+    px = min(w - 1, int((fx - x) * w)); py = min(w - 1, int((fy - y) * w)); best = -1e9
+    # rad > 0: höchster Wert im Umkreis (Bergstationen auf schmalen Gipfeln liegen im 30-m-Geländemodell sonst zu tief)
+    for dy in range(-rad, rad + 1):
+        for dx in range(-rad, rad + 1):
+            X = max(0, min(w - 1, px + dx)); Y = max(0, min(w - 1, py + dy)); i = (Y * w + X) * bpp
+            best = max(best, d[i] * 256 + d[i + 1] + d[i + 2] / 256 - 32768)
+    return best
 
 def km(lo1, la1, lo2, la2):
     return math.hypot((lo1 - lo2) * math.cos(math.radians(la1)) * 111.32, (la1 - la2) * 111.32)
@@ -72,9 +77,9 @@ def main(path):
         lo, hi, plo, phi = 1e9, -1e9, None, None
         for l in mine:
             for (x, y) in ((l[0], l[1]), (l[2], l[3])):
-                e = ele(x, y)
+                e, eh = ele(x, y), ele(x, y, 2)
                 if e < lo: lo, plo = e, (x, y)
-                if e > hi: hi, phi = e, (x, y)
+                if eh > hi: hi, phi = eh, (x, y)
         out[name] = [round(lo), round(hi), len(mine), round(plo[0], 5), round(plo[1], 5), round(phi[0], 5), round(phi[1], 5)]
         print(f'{name}: {round(lo)}–{round(hi)} m ({len(mine)} Lifte)', flush=True)
     d['elev'] = out
