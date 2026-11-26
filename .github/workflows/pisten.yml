@@ -5,7 +5,12 @@ name: Pistendaten aktualisieren
 on:
   schedule:
     - cron: '17 3 * * 1'     # montags 03:17 UTC
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      erzwingen:
+        description: 'Neu bauen, auch wenn der Stand gleich ist'
+        type: boolean
+        default: false
 permissions:
   contents: write
 jobs:
@@ -23,19 +28,20 @@ jobs:
           alt=$(gh release view --json tagName -q .tagName 2>/dev/null | sed 's/^pisten-//' || true)
           echo "neu=$neu alt=$alt"
           echo "neu=$neu" >> "$GITHUB_OUTPUT"
-          if [ "$neu" != "$alt" ]; then echo "bauen=ja" >> "$GITHUB_OUTPUT"; fi
+          if [ "$neu" != "$alt" ] || [ "${{ inputs.erzwingen }}" = "true" ]; then echo "bauen=ja" >> "$GITHUB_OUTPUT"; fi
       - name: Pistendatei bauen
         if: steps.stand.outputs.bauen == 'ja'
         run: |
           python3 -c "import sys; sys.path.insert(0,'tools'); import pisten_bauen as p; p.CHECK_DAYS=0; p.main('cache','daten')"
           ls -la daten
-          python3 -c "import gzip,json;d=json.loads(gzip.open('daten/alpen-pisten.json.gz').read());n=len(d['blocks']);print('Bereiche',n,'Stand',d['date']);assert n>300"
+          python3 -c "import gzip,json;d=json.loads(gzip.open('daten/alpen-pisten.json.gz').read());n=len(d['blocks']);print('Bereiche',n,'Stand',d['date']);assert n>300;print('Skigebiete',len(d.get('areas',[])))"
       - name: Als Release veröffentlichen
         if: steps.stand.outputs.bauen == 'ja'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="pisten-${{ steps.stand.outputs.neu }}"
+          gh release delete "$tag" --yes --cleanup-tag 2>/dev/null || true
           gh release create "$tag" daten/alpen-pisten.json.gz --latest --title "Pistendaten Alpen, Stand ${{ steps.stand.outputs.neu }}" \
             --notes "Pisten und Lifte der Alpen für SkiRadar. Quelle: OpenSkiData / OpenSkiMap.org, © OpenStreetMap-Mitwirkende, Skimap.org. Lizenz: Open Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/"
           # alte Releases aufräumen (die letzten 4 bleiben)

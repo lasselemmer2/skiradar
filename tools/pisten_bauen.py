@@ -97,6 +97,65 @@ def bkey(la, lo):
     return '%.1f,%.1f' % (math.floor(la / PB + 1e-9) * PB, math.floor(lo / PB + 1e-9) * PB)
 
 
+def _km(x):
+    """Summe aller lengthInKm-Angaben in einem Statistik-Zweig."""
+    if isinstance(x, dict):
+        return sum((v if k == 'lengthInKm' and isinstance(v, (int, float)) else _km(v)) for k, v in x.items())
+    if isinstance(x, list):
+        return sum(_km(v) for v in x)
+    return 0
+
+
+def _center(g):
+    t, c = g.get('type'), g.get('coordinates')
+    if t == 'Point':
+        return c
+    pts = []
+    def walk(a):
+        if a and isinstance(a[0], (int, float)):
+            pts.append(a)
+        else:
+            for b in a or []:
+                walk(b)
+    walk(c)
+    if not pts:
+        return None
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    return [(min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2]
+
+
+def build_areas():
+    """Namen und Mittelpunkte aller Skigebiete (Alpinski und Langlauf) – für die Namensschilder auf der Karte."""
+    out = []
+    for ln in lines(f'{BASE}/geojson/ski_areas.geojson'):
+        ln = ln.strip()
+        if ln.endswith(b','):
+            ln = ln[:-1]
+        if not ln.startswith(b'{"type":"Feature"'):
+            continue
+        try:
+            f = json.loads(ln)
+        except Exception:
+            continue
+        p = f.get('properties') or {}
+        name = (p.get('name') or '').strip()
+        if not name or p.get('status') in ('abandoned', 'disused'):
+            continue
+        acts = p.get('activities') or []
+        kind = 'a' if 'downhill' in acts else 'n' if 'nordic' in acts else None
+        if not kind:
+            continue
+        c = _center(f.get('geometry') or {})
+        if not c or not (COV[0] <= c[1] < COV[2] and COV[1] <= c[0] < COV[3]):
+            continue
+        st = ((p.get('statistics') or {}).get('runs') or {}).get('byActivity') or {}
+        km = round(_km(st.get('downhill') if kind == 'a' else st.get('nordic')), 1)
+        out.append([name, round(c[0], 5), round(c[1], 5), km, kind])
+    out.sort(key=lambda a: -a[3])
+    log(len(out), 'Skigebiete mit Namen')
+    return out
+
+
 def build(dst, date):
     ways, used, fake = [], set(), [9 * 10 ** 12]
     for kind in ('lifts', 'runs'):
@@ -148,8 +207,13 @@ def build(dst, date):
         rec = [wid, t, d]
         for k in keys:
             blocks.setdefault(k, []).append(rec)
+    try:
+        areas = build_areas()
+    except Exception as e:
+        log('Skigebiets-Namen nicht ladbar:', e)
+        areas = []
     out = {'v': 1, 'date': date, 'src': 'OpenSkiData / OpenSkiMap.org, © OpenStreetMap-Mitwirkende (ODbL), Skimap.org',
-           'cov': COV, 'fail': {},
+           'cov': COV, 'fail': {}, 'areas': areas,
            'blocks': {k: json.dumps(v, separators=(',', ':'), ensure_ascii=False) for k, v in blocks.items()}}
     tmp = dst + '.tmp'
     with gzip.open(tmp, 'wb', 9) as f:
