@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MetaSnow – Privacy policy</title><style>
+:root{--bg:#0b1726;--ink:#eaf3ff;--mut:#9fb3c8;--acc:#7cc4ff;--line:rgba(160,200,255,.18)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:32px 20px 60px}a{color:var(--acc)}h1{font-size:34px;line-height:1.15;margin:8px 0 6px}
+h2{font-size:21px;margin:30px 0 8px;border-top:1px solid var(--line);padding-top:20px}h3{font-size:17px;margin:18px 0 4px}
+.sub{color:var(--mut);margin:0 0 18px}nav{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;margin-bottom:22px}
+.warn{border-left:4px solid #ff5252;background:rgba(255,60,60,.1);padding:12px 14px;border-radius:0 10px 10px 0;margin:16px 0}
+.note{border-left:4px solid #ff9f1a;background:rgba(255,159,26,.09);padding:12px 14px;border-radius:0 10px 10px 0;margin:16px 0}
+mark{background:#ffe14d;color:#111;padding:0 3px;border-radius:3px}table{border-collapse:collapse;width:100%;font-size:14px}
+td,th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}footer{color:var(--mut);font-size:13px;margin-top:40px}
+li{margin:4px 0}
+</style></head><body><main><nav><a href="index.html">MetaSnow</a><a href="safety.html">Safety &amp; liability</a><a href="privacy.html">Privacy</a><a href="imprint.html">Legal notice</a><span style="margin-left:auto"><a href="../index.html" hreflang="de">DE</a> · <b>EN</b> · <a href="../fr/index.html" hreflang="fr">FR</a> · <a href="../it/index.html" hreflang="it">IT</a></span></nav>
+<h1>Privacy policy</h1><p class="sub">for the MetaSnow app (iOS/iPadOS) · As of 26 November 2026</p>
+<div class="note"><b>In short:</b> No account, no ads, no tracking, no analytics tools. Your ski days stay on your device. For the map and weather to work, the app fetches data from the services listed below – these see your IP address and the requested location or map area.</div>
+<h2>1. Controller</h2>
+<p>Lasse Lemmer<br>Gülterberg 23<br>45239 Essen<br>Germany<br>Email: <a href="mailto:lasselemmer@gmail.com">lasselemmer@gmail.com</a></p>
+<h2>2. Data on your device</h2>
+<p><b>Ski days (tracker):</b> When you tap “Start ski day”, the app stores GPS positions, altitude, speed, air pressure changes (barometer) and the detected type of movement (e.g. walking, car) <b>only locally</b> on your device. They are not transmitted to me. You can delete individual ski days in the app; deleting the app removes everything. Depending on your iOS settings, the files may be included in your own iCloud or computer backup.</p>
+<p><b>Settings and cache:</b> map tiles, weather data, slope data and your settings (e.g. home location for driving times) are cached locally to speed things up.</p>
+<h2>3. Permissions</h2>
+<p><b>Location (“While Using the App”):</b> to show you on the map, load weather for your location, calculate routes from your location and – only during a recording you started – record your ski day, even when the device is locked. iOS indicates this during recording. <b>Motion &amp; Fitness:</b> barometer and type of movement during a recording, to tell lifts, runs and car rides apart. You can revoke both permissions at any time in the iOS settings.</p>
+<h2>4. Data fetched from third parties</h2>
+<p>For the map, weather, search and routes, the app fetches content directly from the following services. For technical reasons they receive your <b>IP address</b>, device/browser information (user agent) and the content of the request, i.e. <b>coordinates or map areas</b> (e.g. for the weather at your location) or your <b>search term</b>. The app does not send names, accounts or device identifiers. The legal basis is Art. 6(1)(b) GDPR (providing the function you use) or Art. 6(1)(f) GDPR (legitimate interest in a working map).</p>
+<table><tr><th>Service</th><th>Purpose</th><th>Sent</th></tr>
+<tr><td><a href="https://open-meteo.com/en/terms">Open-Meteo</a></td><td>Weather forecasts</td><td>In the app only the point you pick for “Weather right here” (coordinates). The forecast for ski resorts and the Alps grid is fetched by a central service, not by your device.</td></tr>
+<tr><td><a href="https://eox.at">EOX IT Services GmbH</a> (Austria)</td><td>Satellite image</td><td>Map area</td></tr>
+<tr><td>NASA GIBS (USA)</td><td>Winter satellite images</td><td>Map area</td></tr>
+<tr><td>Amazon Web Services – Open Data (Mapzen Terrain)</td><td>Terrain heights</td><td>Map area</td></tr>
+<tr><td><a href="https://opentopomap.org/about">OpenTopoMap</a> (Germany)</td><td>Topo map (only if selected)</td><td>Map area</td></tr>
+<tr><td><a href="https://photon.komoot.io">Photon / komoot</a> (Germany)</td><td>Place search</td><td>Search term, map centre, app language</td></tr>
+<tr><td><a href="https://osmfoundation.org/wiki/Privacy_Policy">OpenStreetMap Nominatim</a> (OSM Foundation, UK)</td><td>Place search (fallback if Photon does not respond)</td><td>Search term, app language</td></tr>
+<tr><td><a href="https://project-osrm.org">OSRM</a></td><td>Driving times to ski resorts</td><td>Home location and destination coordinates</td></tr>
+<tr><td>Overpass API servers (FOSSGIS e.V. and others)</td><td>Slopes/resorts outside the built-in data, resort in the tracker</td><td>Map area</td></tr>
+<tr><td><a href="https://avalanche.report">avalanche.report</a> (Euregio)</td><td>Avalanche regions and EAWS levels</td><td>Date, map area</td></tr>
+<tr><td>GitHub (USA)</td><td>Weekly updated slope data and weather forecast updated twice a day (from Open-Meteo)</td><td>Download of the files</td></tr></table>
+<p>Where a service is based outside the EU/EEA (e.g. USA), your IP address may be transferred to that country. The privacy policies of the respective providers apply. I do not operate any server that receives or stores your data.</p>
+<h2>5. App Store and Apple</h2>
+<p>When you download and update, Apple processes data according to <a href="https://www.apple.com/legal/privacy/">Apple’s privacy policy</a>. If you have enabled “Share with App Developers” in iOS, I receive anonymised crash reports and usage statistics from Apple.</p>
+<h2>6. Your rights</h2>
+<p>You have the right of access, rectification, erasure, restriction of processing, data portability and objection (Art. 15–21 GDPR). Since I do not store any personal data about you, this mainly concerns the data on your device, which you can delete yourself. You can lodge a complaint with a data protection supervisory authority, e.g. the one responsible for me, the <a href="https://www.ldi.nrw.de">State Commissioner for Data Protection and Freedom of Information of North Rhine-Westphalia</a>.</p>
+<h2>7. Changes</h2><p>If the app changes, I will update this policy. The version published here applies.</p>
+<p class="sub">This is a translation. The <a href="../datenschutz.html">German version</a> is legally binding.</p>
+<footer>© 2026 Lasse Lemmer · MetaSnow</footer></main></body></html>

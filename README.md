@@ -1,11 +1,12 @@
-# SkiRadar
+# MetaSnow (früher SkiRadar)
 
-Website und Daten zur iOS-App **SkiRadar** – 3D-Schneekarte der Alpen, Pisten-Routing und Ski-Tracker.
+Website und Daten zur iOS-App **MetaSnow** – 3D-Schneekarte der Alpen, Pisten-Routing und Ski-Tracker.
 
 - Hilfe & Support: https://lasselemmer2.github.io/skiradar/
 - Sicherheitshinweise & Haftung: https://lasselemmer2.github.io/skiradar/sicherheit.html
 - Datenschutz: https://lasselemmer2.github.io/skiradar/datenschutz.html
 - Impressum: https://lasselemmer2.github.io/skiradar/impressum.html
+- English: https://lasselemmer2.github.io/skiradar/en/ · Français: …/fr/ · Italiano: …/it/
 
 ## Pistendaten
 
