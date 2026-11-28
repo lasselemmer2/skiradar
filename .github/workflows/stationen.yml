@@ -1,0 +1,32 @@
+# Holt alle 2 Stunden gemessene Schneehöhen (SLF, Lawinenwarndienste Tirol/Südtirol/Trentino, GeoSphere, Météo-France, DWD)
+# und legt sie als eine kleine Datei im Zweig „stationen-daten“ ab. Die App lädt:
+# https://raw.githubusercontent.com/lasselemmer2/skiradar/stationen-daten/stationen.json
+name: Schneehöhen-Stationen aktualisieren
+on:
+  schedule:
+    - cron: '41 */2 * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: stationen
+  cancel-in-progress: false
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stationen abrufen
+        run: python3 tools/stationen_bauen.py ausgabe
+      - name: Als Datei-Zweig ablegen (ein einziger Commit, wird überschrieben)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/sd && cp ausgabe/stationen.json /tmp/sd/
+          cd /tmp/sd
+          git init -q -b stationen-daten
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add . && git commit -qm "Stationen $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push -fq "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" stationen-daten
